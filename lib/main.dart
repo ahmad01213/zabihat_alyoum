@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:zapihatalyoumapp/Bloc/CartCountBloc.dart';
 import 'package:zapihatalyoumapp/UI/Screens/AboutUsScreen.dart';
 import 'package:zapihatalyoumapp/UI/Screens/CartScreen.dart';
@@ -9,6 +9,7 @@ import 'package:zapihatalyoumapp/UI/Screens/MazadScreen.dart';
 import 'package:zapihatalyoumapp/UI/Screens/OrdersScreen.dart';
 import 'package:zapihatalyoumapp/UI/Screens/OurAccounts.dart';
 import 'package:zapihatalyoumapp/UI/Screens/ProductsScreen.dart';
+import 'package:zapihatalyoumapp/UI/Screens/my_account_screen.dart';
 import 'package:zapihatalyoumapp/shared_data.dart';
 import 'Bloc/bloc_provider.dart';
 import 'Bloc/side_menu_bloc.dart';
@@ -25,21 +26,25 @@ class _MainWidgetState extends State<MainWidget> {
   String appBarTitle = "ذبيحة اليوم";
   List<IconData> icons = [
     Icons.select_all,
+    Icons.storage,
     Icons.account_balance,
     Icons.local_shipping,
     Icons.add_shopping_cart,
     Icons.contact_phone,
     Icons.group,
     Icons.share,
+    Icons.supervised_user_circle,
   ];
   List<String> titles = [
     "طلب ذبيحة",
+    'المزاد',
     "حساباتنا",
     "طلباتي",
     "سلة المشتريات",
     "اتصل بنا",
     "من نحن",
-    "شارك التطبيق"
+    "شارك التطبيق",
+    "حسابي"
   ];
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
@@ -49,6 +54,15 @@ class _MainWidgetState extends State<MainWidget> {
     return BlocProvider<SideMenuBloc>(
       bloc: bloc,
       child: MaterialApp(
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate
+        ],
+        supportedLocales: [
+          Locale('ar', 'AE'), // OR Locale('ar', 'AE') OR Other RTL locales
+        ],
+        locale: Locale('ar', 'AE'),
         theme: ThemeData(
           fontFamily: 'default',
           brightness: Brightness.light,
@@ -61,10 +75,11 @@ class _MainWidgetState extends State<MainWidget> {
               final menu = snapshot.data;
               return Container(
                 child: Scaffold(
+                    resizeToAvoidBottomPadding: false,
                     backgroundColor: Colors.white,
                     key: _scaffoldKey,
-                    endDrawer: Drawer(
-                      child: Column(
+                    drawer: Drawer(
+                      child: ListView(
                         children: [
                           Container(
                             alignment: Alignment.topCenter,
@@ -73,10 +88,9 @@ class _MainWidgetState extends State<MainWidget> {
                               "images/logo.png",
                               fit: BoxFit.cover,
                             ),
-                            height: 130,
-                            width: 130,
+                            height: 100,
+                            width: 100,
                           ),
-                          Text('ذبيحة اليوم'),
                           rowSide(Menu(1), context, bloc, titles[0]),
                           rowSide(Menu(2), context, bloc, titles[1]),
                           rowSide(Menu(3), context, bloc, titles[2]),
@@ -84,6 +98,11 @@ class _MainWidgetState extends State<MainWidget> {
                           rowSide(Menu(5), context, bloc, titles[4]),
                           rowSide(Menu(6), context, bloc, titles[5]),
                           rowSide(Menu(7), context, bloc, titles[6]),
+                          rowSide(Menu(8), context, bloc, titles[7]),
+                          rowSide(Menu(9), context, bloc, titles[8]),
+                          SizedBox(
+                            height: 50,
+                          )
                         ],
                       ),
                     ), // assign key to Scaffoldq
@@ -104,6 +123,19 @@ class _MainWidgetState extends State<MainWidget> {
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {
+                                      _scaffoldKey.currentState.openDrawer();
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 40),
+                                      child: Icon(
+                                        Icons.menu,
+                                        color: Colors.white,
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ),
                                   Container(
                                     margin:
                                         const EdgeInsets.fromLTRB(20, 40, 0, 0),
@@ -118,19 +150,6 @@ class _MainWidgetState extends State<MainWidget> {
                                         'images/cart.png',
                                         width: 35,
                                         height: 35,
-                                      ),
-                                    ),
-                                  ),
-                                  FlatButton(
-                                    onPressed: () {
-                                      _scaffoldKey.currentState.openEndDrawer();
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 40),
-                                      child: Icon(
-                                        Icons.menu,
-                                        color: Colors.white,
-                                        size: 30,
                                       ),
                                     ),
                                   ),
@@ -194,25 +213,38 @@ class _MainWidgetState extends State<MainWidget> {
         case 1:
           return ProductsScreen();
         case 2:
-          return OurAccounts();
+          return MazadScreen();
         case 3:
-          return OrdersScreen();
+          return OurAccounts();
         case 4:
-          return CartScreen();
+          return MyOrdersScreen();
         case 5:
-          return ContactUsScreen();
+          return CartScreen();
         case 6:
-          return AboutUsScreen();
+          return ContactUsScreen();
         case 7:
-          Share.share("   حمل تطبيق ذبيحة اليوم   $appUrl");
-          return ProductsScreen();
+          return AboutUsScreen();
+        case 9:
+          return MyAccountScreen();
           break;
+        case 8:
+//          Share.share("   حمل تطبيق ذبيحة اليوم   $appUrl");
+          return ProductsScreen();
         default:
           {
             return ProductsScreen();
           }
       }
     }
+  }
+
+  navigateToLogin() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyAccountScreen(),
+      ),
+    );
   }
 
   Widget rowSide(Menu menu, context, SideMenuBloc bloc, String title) {
@@ -223,20 +255,9 @@ class _MainWidgetState extends State<MainWidget> {
         bloc.selectMenu(menu);
       },
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Text(
-              titles[menu.index - 1],
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-              ),
-              textAlign: TextAlign.end,
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Container(
@@ -247,6 +268,17 @@ class _MainWidgetState extends State<MainWidget> {
                   size: 25,
                   color: mainColor,
                 )),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Text(
+              titles[menu.index - 1],
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+              textAlign: TextAlign.end,
+            ),
           ),
         ],
       ),

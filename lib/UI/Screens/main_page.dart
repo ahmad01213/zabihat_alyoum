@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
 import 'package:zapihatalyoumapp/Bloc/side_menu_bloc.dart';
 import 'package:zapihatalyoumapp/DataLayer/Menu.dart';
+import 'package:zapihatalyoumapp/UI/Screens/my_account_screen.dart';
 
 import '../../shared_data.dart';
 import 'AboutUsScreen.dart';
@@ -25,17 +25,17 @@ class MainPage extends StatelessWidget {
                 backgroundColor: Colors.white,
                 key: _scaffoldKey,
                 endDrawer: Drawer(
-                  child: Column(
+                  child: ListView(
                     children: [
                       Container(
                         alignment: Alignment.topCenter,
-                        margin: EdgeInsets.fromLTRB(0, 50, 0, 40),
+                        margin: EdgeInsets.fromLTRB(0, 50, 0, 20),
                         child: Image.asset(
                           "images/logo.png",
                           fit: BoxFit.cover,
                         ),
-                        height: 130,
-                        width: 130,
+                        height: 70,
+                        width: 70,
                       ),
                       divider(),
                       rowSide(Menu(1), context, bloc, titles[0]),
@@ -45,6 +45,7 @@ class MainPage extends StatelessWidget {
                       rowSide(Menu(5), context, bloc, titles[4]),
                       rowSide(Menu(6), context, bloc, titles[5]),
                       rowSide(Menu(7), context, bloc, titles[6]),
+                      rowSide(Menu(8), context, bloc, titles[7]),
                     ],
                   ),
                 ), // assign key to Scaffoldq
@@ -104,34 +105,6 @@ class MainPage extends StatelessWidget {
                               child: Image.asset('images/logo.png'),
                             ),
                           ),
-//                              Positioned(
-//                                left: 50,
-//                                top: 37,
-//                                child: Container(
-//                                  height: 17,
-//                                  width: 17,
-//                                  child: Image.asset(
-//                                    'images/count.png',
-//                                    width: 20,
-//                                    height: 20,
-//                                    fit: BoxFit.cover,
-//                                  ),
-//                                ),
-//                              ),
-//                              Positioned(
-//                                left: 56,
-//                                top: 39,
-//                                child: Container(
-//                                    height: 15,
-//                                    width: 15,
-//                                    child: Text(
-//                                      counter.toString(),
-//                                      style: TextStyle(
-//                                          color: Colors.white,
-//                                          fontSize: 10,
-//                                          fontWeight: FontWeight.bold),
-//                                    )),
-//                              ),
                         ],
                       ),
                     ),
@@ -152,15 +125,17 @@ class MainPage extends StatelessWidget {
         case 2:
           return OurAccounts();
         case 3:
-          return OrdersScreen();
+          return MyOrdersScreen();
         case 4:
           return CartScreen();
         case 5:
           return ContactUsScreen();
         case 6:
           return AboutUsScreen();
+        case 8:
+          return MyAccountScreen();
         case 7:
-          Share.share("   حمل تطبيق ذبيحة اليوم   $appUrl");
+//          Share.share("   حمل تطبيق ذبيحة اليوم   $appUrl");
           break;
         default:
           {
@@ -184,7 +159,7 @@ class MainPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 20),
             child: Text(
-              titles[menu.index - 1],
+              title,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,
@@ -219,6 +194,7 @@ class MainPage extends StatelessWidget {
 
   String appBarTitle = "ذبيحة اليوم";
   List<IconData> icons = [
+    Icons.account_circle,
     Icons.select_all,
     Icons.account_balance,
     Icons.local_shipping,
@@ -234,6 +210,7 @@ class MainPage extends StatelessWidget {
     "سلة المشتريات",
     "اتصل بنا",
     "من نحن",
-    "شارك التطبيق"
+    "شارك التطبيق",
+    "تسجيل الدخول"
   ];
 }

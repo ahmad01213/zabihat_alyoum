@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zapihatalyoumapp/Bloc/ProductsBloc.dart';
 import 'package:zapihatalyoumapp/Bloc/bloc_provider.dart';
 import 'package:zapihatalyoumapp/DataLayer/Product.dart';
@@ -8,6 +9,7 @@ import 'package:zapihatalyoumapp/shared_data.dart';
 class ProductsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    readToken();
     return SingleChildScrollView(
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -15,6 +17,12 @@ class ProductsScreen extends StatelessWidget {
         child: buildProductGride(context),
       ),
     );
+  }
+
+  readToken() async {
+    final storage = new FlutterSecureStorage();
+    token = await storage.read(key: "token");
+    print('token$token');
   }
 
   Widget buildProductGride(context) {

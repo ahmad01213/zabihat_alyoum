@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
+import 'package:zapihatalyoumapp/DataLayer/Pag.dart';
 import 'package:zapihatalyoumapp/shared_data.dart';
 
 class ContactUsScreen extends StatelessWidget {
@@ -29,7 +30,9 @@ class ContactUsScreen extends StatelessWidget {
             width: 100,
             child: InkWell(
               onTap: () {
-                UrlLauncher.launch("tel://$phone");
+                Pag $phoneNum =
+                    pages.firstWhere((page) => page.type == 'phone');
+                UrlLauncher.launch("tel://${$phoneNum.text}");
               },
               child: Card(
                 color: mainColor,
@@ -64,8 +67,10 @@ class ContactUsScreen extends StatelessWidget {
             width: 100,
             child: InkWell(
               onTap: () {
+                Pag $phoneNum =
+                    pages.firstWhere((page) => page.type == 'whats');
                 String whatsAppUrl =
-                    "https://api.whatsapp.com/send?phone=$whats}";
+                    "https://api.whatsapp.com/send?phone=${$phoneNum.text}";
                 UrlLauncher.launch(whatsAppUrl);
               },
               child: Card(

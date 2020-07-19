@@ -74,22 +74,17 @@ class CartScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    width: 30,
-                    height: 30,
-                    padding: EdgeInsets.only(left: 10),
-                    child: FlatButton(
-                        padding: EdgeInsets.all(0),
-                        onPressed: () {
-                          DBHelper.delete(
-                              'user_cart', data.key, sql_cart_query);
-                          print('detail${data.key}');
-                          bloc.fetchCartData();
-                        },
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                          size: 30,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          child: CachedNetworkImage(
+                            imageUrl: data.image,
+                            fit: BoxFit.fill,
+                          ),
                         )),
                   ),
                   Padding(
@@ -107,17 +102,22 @@ class CartScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          child: CachedNetworkImage(
-                            imageUrl: data.image,
-                            fit: BoxFit.fill,
-                          ),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    padding: EdgeInsets.only(left: 10),
+                    child: FlatButton(
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {
+                          DBHelper.delete(
+                              'user_cart', data.key, sql_cart_query);
+                          print('detail${data.key}');
+                          bloc.fetchCartData();
+                        },
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          size: 30,
                         )),
                   ),
                 ],
@@ -225,14 +225,14 @@ class CartScreen extends StatelessWidget {
       height: 100,
       color: Colors.white,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 20.0, 10),
             child: data != null && data.length > 0
                 ? Text('السعر  $totalCost ريال ',
                     style: TextStyle(
-                      color: mainColor,
+                      color: Colors.black,
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                     ))
@@ -295,15 +295,19 @@ class CartScreen extends StatelessWidget {
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LocationScreen(
-                          cartData: data,
-                          completeCost: totalCost.toString(),
-                        ),
-                      ),
-                    );
+                    isRegistered()
+                        ? Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LocationScreen(
+                                isCartPage: false,
+                                detailContext: context,
+                                cartData: Cart.encondeToJson(data),
+                                completeCost: totalCost.toString(),
+                              ),
+                            ),
+                          )
+                        : alert("الرجاء تسجبل الدخول", context);
                   },
                 ),
               ),
@@ -311,4 +315,31 @@ class CartScreen extends StatelessWidget {
           ),
         ],
       );
+  alert(message, ctx) {
+    showDialog(
+        context: ctx,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              message,
+              style: TextStyle(color: Colors.black, fontSize: 15),
+            ),
+            content: Text(""),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(
+                  "حسنا",
+                  style: TextStyle(
+                      color: mainColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 }

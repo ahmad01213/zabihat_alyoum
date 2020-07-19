@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -18,7 +19,7 @@ import 'MapScreen.dart';
 class LocationScreen extends StatefulWidget {
   var detailContext;
   String completeCost;
-  List<Cart> cartData;
+  var cartData;
   bool isCartPage = true;
 
   LocationScreen(
@@ -46,8 +47,13 @@ class _LocationScreenState extends State<LocationScreen> {
     return Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: Colors.white, //change your color here
+          ),
           title: Text(
-            'تحديد عنوان التوصيل',
+            "إكمال الطلب",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           centerTitle: true,
           backgroundColor: mainColor,
@@ -67,20 +73,20 @@ class _LocationScreenState extends State<LocationScreen> {
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       ),
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 0, 30, 10),
                     child: TextField(
                       focusNode: FocusNode(),
-                      controller: phoneController,
+                      enabled: false,
+                      controller: TextEditingController()..text = user.phone,
                       keyboardType: TextInputType.phone,
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'اكتب رقم الهاتف'),
-                      onChanged: (query) {},
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                   Container(
@@ -109,8 +115,17 @@ class _LocationScreenState extends State<LocationScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(15.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: <Widget>[
+                                        Icon(
+                                          data == null ||
+                                                  data.isMyLocation == false
+                                              ? Icons.blur_circular
+                                              : Icons.check_circle,
+                                          size: 26,
+                                          color: mainColor,
+                                        ),
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(right: 40),
@@ -121,14 +136,6 @@ class _LocationScreenState extends State<LocationScreen> {
                                                     fontSize: 16.0,
                                                     fontWeight: FontWeight.bold,
                                                   )),
-                                        ),
-                                        Icon(
-                                          data == null ||
-                                                  data.isMyLocation == false
-                                              ? Icons.blur_circular
-                                              : Icons.check_circle,
-                                          size: 26,
-                                          color: mainColor,
                                         ),
                                       ],
                                     ),
@@ -166,8 +173,17 @@ class _LocationScreenState extends State<LocationScreen> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(15.0),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: <Widget>[
+                                        Icon(
+                                          data == null ||
+                                                  data.isMyLocation == true
+                                              ? Icons.blur_circular
+                                              : Icons.check_circle,
+                                          size: 26,
+                                          color: mainColor,
+                                        ),
                                         Padding(
                                           padding:
                                               const EdgeInsets.only(right: 40),
@@ -177,14 +193,6 @@ class _LocationScreenState extends State<LocationScreen> {
                                                 fontSize: 16.0,
                                                 fontWeight: FontWeight.bold,
                                               )),
-                                        ),
-                                        Icon(
-                                          data == null ||
-                                                  data.isMyLocation == true
-                                              ? Icons.blur_circular
-                                              : Icons.check_circle,
-                                          size: 26,
-                                          color: mainColor,
                                         ),
                                       ],
                                     ),
@@ -261,17 +269,7 @@ class _LocationScreenState extends State<LocationScreen> {
                           side: BorderSide(color: Colors.transparent)),
                       color: mainColor,
                       onPressed: () {
-                        if (phoneController.text.length < 9) {
-                          scaffoldKey?.currentState?.showSnackBar(SnackBar(
-                            duration: Duration(seconds: 2),
-                            content: Text(
-                              'أكتب رقم هاتف صحيح',
-                              textAlign: TextAlign.center,
-                            ),
-                          ));
-                          return;
-                        }
-                        validateAndSend(context);
+                        confirmOrder(context);
                       },
                       child: Text(
                         'إرسال الطلب',
@@ -376,6 +374,64 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
+  var isloading = false;
+  Future<void> confirmOrder(context) async {
+    Map<String, dynamic> params = Map();
+    print("json : ${widget.cartData}");
+    params['payment_type'] = selctedPayMent;
+    params['products'] = "${widget.cartData.toString()}";
+    params['lat'] = selectedLocation.latitude.toString();
+    params['lng'] = selectedLocation.longitude.toString();
+    params['total_cost'] = widget.completeCost;
+    params['selected_period'] = selectedPeriod;
+    params['accepted'] = "0";
+    Map<String, String> headers = {
+      'Authorization': 'Bearer $token',
+    };
+    setState(() {
+      isloading = true;
+    });
+    final uri = "https://thegradiant.com/zabihat_alyoum/api/useraddorder";
+
+    final response = await http.post(
+      uri,
+      headers: isRegistered() ? headers : null,
+      body: params,
+    );
+    print("response  :  ${response.statusCode}");
+    setState(() {
+      isloading = false;
+    });
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              "شكرا لك تم استلام طلبك بنجاح سيقوم مندوبتا بتوصيل طلبك في اسرع وقت ممكن",
+              style: TextStyle(color: Colors.black, fontSize: 15),
+            ),
+            content: Text(""),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(
+                  "حسنا",
+                  style: TextStyle(
+                      color: mainColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.pop(context, 'yes');
+                },
+              ),
+            ],
+          );
+        });
+    DBHelper.clearCart();
+  }
+
   Widget buildList(List<dynamic> data, int whichList) {
     final bloc = DetailListBloc();
     return BlocProvider<DetailListBloc>(
@@ -404,42 +460,6 @@ class _LocationScreenState extends State<LocationScreen> {
                 })),
       ),
     );
-  }
-
-  void validateAndSend(context) {
-    String cartString = "";
-    for (int i = 0; i < widget.cartData.length; i++) {
-      cartString = cartString +
-          "${widget.cartData[i].name}##${widget.cartData[i].quantity}##${widget.cartData[i].cut_name}##${widget.cartData[i].size_name}##${widget.cartData[i].item_price}##${widget.cartData[i].image}&&";
-    }
-    String order = "${phoneController.text}@${selectedLocation.latitude},"
-        "${selectedLocation.longitude}@$address@$selectedPeriod@$selctedPayMent@$cartString@${widget.completeCost}";
-    sendOrder(order, context);
-  }
-
-  Future<void> sendOrder(String order, context) async {
-    setState(() {
-      isLoading = true;
-    });
-    String count;
-    final uri = "https://zabaeh-el-riad.firebaseio.com/counter.json";
-    final resp = await http.get(uri);
-    final extractedData = json.decode(resp.body);
-    count = extractedData.toString();
-    int newCount = int.parse(count) + 1;
-    final respo = await http.put(
-      uri,
-      body: json.encode(newCount),
-    );
-    final url = "https://zabaeh-el-riad.firebaseio.com/orders/$newCount.json";
-    final response = await http.put(
-      url,
-      body: json.encode(order + "@$newCount" + "@" + DateTime.now().toString()),
-    );
-    setState(() {
-      isLoading = false;
-    });
-    showSuccessDialog(context, newCount);
   }
 
   Future<void> showSuccessDialog(context, newCount) async {

@@ -5,16 +5,22 @@ class Product {
   String image;
   String smallerPrice;
   List<ProductSize> sizes;
-//  List<ProductCut> cut;
+  List<ProductCut> cuts;
 
-  Product({
-    this.id,
-    this.title,
-    this.description,
-    this.image,
-    this.smallerPrice,
-    this.sizes,
-  });
+  Product(
+      {this.id,
+      this.title,
+      this.description,
+      this.image,
+      this.smallerPrice,
+      this.sizes,
+      this.cuts});
+}
+
+class ProductCut {
+  String id;
+  String name;
+  ProductCut({this.id, this.name});
 }
 
 class ProductSize {

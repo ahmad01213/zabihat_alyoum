@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:zapihatalyoumapp/DataLayer/Pag.dart';
 import 'package:zapihatalyoumapp/DataLayer/Product.dart';
+import 'DataLayer/User.dart';
 import 'DataLayer/cuts.dart';
 
-List<Cut> cuts = [];
 List bank = [];
 List<String> periods = [];
+List<Pag> pages = [];
 List<String> payments = ["كاش ( عند الإستلام )", "التحويل البنكي"];
 LocationData locationData;
 String userAdress;
@@ -20,6 +22,18 @@ String phone = "054356446474";
 String whats = "6347553";
 String aboutUs = "fgdgfdgfkdfkjsfdjhdfjhdfhjdfsjhdfsjhf";
 String appUrl = "";
+String firetoken = "";
+User user;
+List mazads = [];
+String token;
+isRegistered() {
+  if (token != null) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 final sql_cart_query =
     'CREATE TABLE user_cart(id TEXT PRIMARY KEY , key TEXT, name TEXT,quantity TEXT, size_key TEXT,size_name TEXT, item_price TEXT,cut_key TEXT, cut_name TEXT,image TEXT)';
 final sql_orders_query =

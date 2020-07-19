@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
-import 'package:ritakwaterapp/DataLayer/User.dart';
+import 'package:zapihatalyoumapp/DataLayer/User.dart';
 
 import '../../shared_data.dart';
 
@@ -20,37 +20,21 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   final Map<String, dynamic> formData = {};
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: new AppBar(
-        elevation: 10,
-        title: Text(
-          "حسابي",
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.all(30),
-          alignment: Alignment.topCenter,
-          child: Column(
-            children: <Widget>[
-              Container(
-                height: 135,
-                width: 117,
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  fit: BoxFit.fill,
-                ),
-              ),
-              _buildForm(context),
-              SizedBox(
-                height: 20,
-              ),
-              isRegistered() ? Container() : buildSocondButton(context)
-            ],
+    return Container(
+      margin: EdgeInsets.fromLTRB(30, 30, 30, 0),
+      alignment: Alignment.topCenter,
+      height: MediaQuery.of(context).size.height - 170,
+      child: ListView(
+        children: <Widget>[
+          _buildForm(context),
+          SizedBox(
+            height: 20,
           ),
-        ),
+          isRegistered() ? Container() : buildSocondButton(context),
+          SizedBox(
+            height: 20,
+          ),
+        ],
       ),
     );
   }
@@ -150,7 +134,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: textColor),
+                    color: Colors.white),
               ),
             ),
           );
@@ -165,8 +149,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     String endpoint = isRegister ? "register" : "login";
     isRegister ? print("") : params.remove("name");
     try {
-      final Uri url = Uri.parse(
-          "http://thegradiant.com/rital_water/rital_water/api/$endpoint");
+      final Uri url =
+          Uri.parse("http://thegradiant.com/zabihat_alyoum/api/$endpoint");
       final response = await http.post(
         url,
         body: params,

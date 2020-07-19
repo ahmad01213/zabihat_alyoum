@@ -1,69 +1,93 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/Bloc/MyOrdersBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/bloc_provider.dart';
-import 'package:zapihatalyoumapp/DataLayer/Orders.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
+import 'package:zapihatalyoumapp/DataLayer/Order.dart';
 
 import '../../shared_data.dart';
 
-class OrdersScreen extends StatelessWidget {
+class MyOrdersScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    final bloc = MyOrdersBloc();
-    bloc.fetchOrdersData();
+  _MyOrdersScreenState createState() => _MyOrdersScreenState();
+}
 
-    return Center(
-        child: Container(
-            height: MediaQuery.of(context).size.height - 140,
-            child: BlocProvider(
-                bloc: bloc,
-                child: StreamBuilder<List<Order>>(
-                    stream: bloc.ordersDataStream,
-                    builder: (context, snapshot) {
-                      return snapshot.data != null
-                          ? buildList(snapshot.data)
-                          : buildList([]);
-                    }))));
+class _MyOrdersScreenState extends State<MyOrdersScreen> {
+  List<Order> orders = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getOrders();
   }
 
-  Widget buildList(List<Order> data) {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: isRegistered()
+          ? isloading
+              ? Center(
+                  child: Container(
+                    child: SpinKitRing(
+                      duration: Duration(milliseconds: 500),
+                      color: mainColor,
+                      size: 40,
+                      lineWidth: 5,
+                    ),
+                    width: 100,
+                    height: 100,
+                  ),
+                )
+              : Center(
+                  child: Container(
+                      height: MediaQuery.of(context).size.height - 140,
+                      child: orders.length > 0
+                          ? buildList()
+                          : Center(
+                              child: Text(
+                                "لا توجد لديك طلبات",
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )))
+          : Center(
+              child: Text(
+                'الرجاء تسجيل الدخول',
+                style:
+                    TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+              ),
+            ),
+      height: MediaQuery.of(context).size.height - 200,
+    );
+  }
+
+  Widget buildList() {
     return ListView.builder(
-        itemCount: data.length,
+        itemCount: orders.length,
         itemBuilder: (ctx, i) {
-          return buildListItem(data[i]);
+          return buildListItem(orders[i]);
         });
   }
 
   Widget buildListItem(Order order) {
     return Container(
-      height: 250,
+      height: 180,
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        elevation: 10.0,
+        elevation: 1.0,
         margin: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0))),
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    order.id,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: mainColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.end,
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
                   Container(
                     width: 100,
                     child: Text(
@@ -71,35 +95,30 @@ class OrdersScreen extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: socondColor,
+                        color: mainColor,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    order.price + "  R.S",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
                   ),
                   SizedBox(
                     width: 50,
                   ),
+                  Text(order.id,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.start),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
                   Container(
                     width: 100,
                     child: Text(
@@ -107,33 +126,44 @@ class OrdersScreen extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: socondColor,
+                        color: mainColor,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                     ),
+                  ),
+                  SizedBox(
+                    width: 50,
+                  ),
+                  Text(
+                    order.totalCost + "  R.S",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
-              SizedBox(
-                height: 30,
-              ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
                     width: 100,
                     child: Text(
-                      order.date,
-                      maxLines: 2,
+                      "تاريخ الطلب",
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
+                        color: mainColor,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                     ),
                   ),
                   SizedBox(
@@ -142,15 +172,15 @@ class OrdersScreen extends StatelessWidget {
                   Container(
                     width: 100,
                     child: Text(
-                      "توقيت الطلب",
-                      maxLines: 1,
+                      order.date,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: socondColor,
+                        color: Colors.grey,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
-                      textAlign: TextAlign.end,
+                      textAlign: TextAlign.start,
                     ),
                   ),
                 ],
@@ -166,5 +196,29 @@ class OrdersScreen extends StatelessWidget {
     return Row(
       children: <Widget>[],
     );
+  }
+
+  bool isloading = false;
+  getOrders() async {
+    final url = 'https://thegradiant.com/zabihat_alyoum/api/userorders';
+    final headers = {"Authorization": "Bearer " + token};
+    print("url  :  $url");
+    setState(() {
+      isloading = true;
+    });
+    final response = await http.post(url, headers: headers);
+    print("ressss : ${response.body}");
+    final ordersJson = json.decode(response.body) as List<dynamic>;
+    ordersJson.forEach((order) {
+      final orderData = Order(
+          id: order['id'].toString(),
+          date: order['created_at'].toString().substring(0, 10),
+          totalCost: order['total_cost']);
+      orders.add(orderData);
+    });
+    orders = orders.reversed.toList();
+    setState(() {
+      isloading = false;
+    });
   }
 }

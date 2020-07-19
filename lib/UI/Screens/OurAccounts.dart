@@ -22,31 +22,8 @@ class OurAccounts extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Container(
-                    width: 30,
-                    height: 30,
-                    padding: EdgeInsets.only(left: 10),
-                    child: FlatButton(
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {},
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(bank[1],
-                            style: TextStyle(
-                              color: Colors.deepPurple,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            )),
-                      ],
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ClipRRect(
@@ -55,9 +32,18 @@ class OurAccounts extends StatelessWidget {
                           width: 100,
                           height: 100,
                           child: Image.network(
-                            bank[0],
+                            "https://pbs.twimg.com/profile_images/1177208516572065793/s-dzr52z_400x400.jpg",
                             fit: BoxFit.fill,
                           ),
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("مصرف الراجحي",
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
                         )),
                   ),
                 ],
@@ -65,7 +51,7 @@ class OurAccounts extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
-              Text("حساب رقم  :  ${bank[2]}",
+              Text("حساب رقم  :  465445234327647264",
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 18.0,

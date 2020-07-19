@@ -8,6 +8,7 @@ class Cart {
   String cut_name;
   String cut_key;
   String image;
+
   Cart(
       {this.key,
       this.name,
@@ -18,4 +19,14 @@ class Cart {
       this.cut_name,
       this.image,
       this.cut_key});
+
+  toJson() {
+    return "\{\"quantity\"\: ${this.quantity},\"productId\"\: ${this.key},\"size_id\"\: ${this.size_key},\"cut_id\"\: ${this.cut_key}\}";
+  }
+
+  static List encondeToJson(List<Cart> list) {
+    List jsonList = List();
+    list.map((item) => jsonList.add(item.toJson())).toList();
+    return jsonList;
+  }
 }

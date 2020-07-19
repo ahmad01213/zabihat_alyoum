@@ -27,9 +27,13 @@ class ProductDetailsScreen extends StatelessWidget {
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
         title: Text(
           product.title,
           textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 16),
         ),
         centerTitle: true,
         backgroundColor: mainColor,
@@ -41,7 +45,7 @@ class ProductDetailsScreen extends StatelessWidget {
             buildListTitle('اختر الحجم'),
             buildList(product.sizes, 1),
             buildListTitle('اختر التقطيع'),
-            buildList(cuts, 2),
+            buildList(product.cuts, 2),
             buildListTitle('الكمية'),
             buildQuantityInputs(),
             buildButton(context)
@@ -155,6 +159,7 @@ class ProductDetailsScreen extends StatelessWidget {
     return InkWell(
       onTap: () {
         saveDataSelected(data, which);
+        print('size: ${data.id}');
         bloc.setCount(index);
       },
       child: Container(
@@ -258,7 +263,7 @@ class ProductDetailsScreen extends StatelessWidget {
 
                       Navigator.of(context).pop();
                       final bloc = BlocProvider.of<SideMenuBloc>(context);
-                      bloc.selectMenu(Menu(4));
+                      bloc.selectMenu(Menu(5));
                     } else {
                       showSnackBar(validationMessage);
                     }
@@ -308,7 +313,7 @@ class ProductDetailsScreen extends StatelessWidget {
     validationMessage == "" ? print("object") : showSnackBar(validationMessage);
 
     final size = product.sizes.firstWhere((size) => size.id == selectedSize);
-    final cut = cuts.firstWhere((cut) => cut.id == slectedCut);
+    final cut = product.cuts.firstWhere((cut) => cut.id == slectedCut);
     final totalPrice = int.parse(size.price) * count;
     Cart cart = Cart(
         size_key: selectedSize,
@@ -321,17 +326,47 @@ class ProductDetailsScreen extends StatelessWidget {
         item_price: size.price,
         size_name: size.name);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LocationScreen(
-          isCartPage: false,
-          detailContext: context,
-          cartData: [cart],
-          completeCost: totalPrice.toString(),
-        ),
-      ),
-    );
+    isRegistered()
+        ? Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LocationScreen(
+                isCartPage: false,
+                detailContext: context,
+                cartData: Cart.encondeToJson([cart]),
+                completeCost: totalPrice.toString(),
+              ),
+            ),
+          )
+        : alert("الرجاء تسجبل الدخول", context);
+  }
+
+  alert(message, ctx) {
+    showDialog(
+        context: ctx,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text(
+              message,
+              style: TextStyle(color: Colors.black, fontSize: 15),
+            ),
+            content: Text(""),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(
+                  "حسنا",
+                  style: TextStyle(
+                      color: mainColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
   String validateInputs() {
@@ -347,7 +382,7 @@ class ProductDetailsScreen extends StatelessWidget {
   void addProductToCart() {
     DBHelper.database(sql_cart_query);
     final size = product.sizes.firstWhere((size) => size.id == selectedSize);
-    final cut = cuts.firstWhere((cut) => cut.id == slectedCut);
+    final cut = product.cuts.firstWhere((cut) => cut.id == slectedCut);
     print('detail${product.id + selectedSize + slectedCut}');
     DBHelper.insert(
         'user_cart',
