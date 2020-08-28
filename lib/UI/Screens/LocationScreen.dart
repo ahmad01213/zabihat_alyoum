@@ -41,7 +41,7 @@ class _LocationScreenState extends State<LocationScreen> {
   Widget build(BuildContext context) {
     selectedPeriod = "الفترة الصباحية";
     selctedPayMent = "كاش (عند الإستلام)";
-    selectedLocation = LatLng(locationData.latitude, locationData.longitude);
+    selectedLocation =locationData!=null? LatLng(locationData.latitude, locationData.longitude):LatLng(0.0,0.0);
     final bloc = LocationBloc();
 //    bloc.selectLocation(Location(mapAdress: mapAdress, isMyLocation: true));
     return Scaffold(
@@ -160,7 +160,7 @@ class _LocationScreenState extends State<LocationScreen> {
                                             color: Colors.black38,
                                             style: BorderStyle.solid,
                                             width: 1)),
-                                    child: Text(userAdress,
+                                    child: Text(userAdress!=null?userAdress:'...',
                                         textAlign: TextAlign.end,
                                         style: TextStyle(
                                           color: mainColor,

@@ -137,7 +137,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                     width: 50,
                   ),
                   Text(
-                    order.totalCost + "  R.S",
+                   "  R.S",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
