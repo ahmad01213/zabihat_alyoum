@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
-import 'package:zapihatalyoumapp/DataLayer/Pag.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/DataLayer/Pag.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 
 class ContactUsScreen extends StatelessWidget {
   @override

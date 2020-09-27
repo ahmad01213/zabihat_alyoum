@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
-import 'package:zapihatalyoumapp/DataLayer/Cart.dart';
-import 'package:zapihatalyoumapp/helpers/DBHelper.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/DataLayer/Cart.dart';
+import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 import 'bloc.dart';
 
 class CartDataBloc implements Bloc {
@@ -18,6 +18,8 @@ class CartDataBloc implements Bloc {
           cut_name: item['cut_name'],
           item_price: item['item_price'],
           key: item['key'],
+          id: item['id'],
+          pack: item['pack'],
           quantity: item['quantity'],
           size_key: item['size_key'],
           cut_key: item['cut_key'],

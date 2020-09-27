@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:zapihatalyoumapp/Bloc/ProductsBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/bloc_provider.dart';
-import 'package:zapihatalyoumapp/DataLayer/Mazad.dart';
-import 'package:zapihatalyoumapp/DataLayer/Product.dart';
+import 'package:zapihatalyoumnew/Bloc/ProductsBloc.dart';
+import 'package:zapihatalyoumnew/Bloc/bloc_provider.dart';
+import 'package:zapihatalyoumnew/DataLayer/Mazad.dart';
+import 'package:zapihatalyoumnew/DataLayer/Product.dart';
 import '../../shared_data.dart';
 import 'package:http/http.dart' as http;
 
@@ -279,7 +279,11 @@ class _MazadScreenState extends State<MazadScreen> {
                 child: FlatButton(
                   padding: EdgeInsets.all(0),
                   onPressed: () {
-                    addBid(mazadId, bid, context);
+                    if(double.parse(bid.toString())>double.parse(minprice)){
+                      addBid(mazadId, bid, context);
+                    }else{
+                      showSnackBar('أقل سعر $minprice  ريال  ');
+                    }
                   },
                   child: new Text(
                     'إضافة',
@@ -349,6 +353,8 @@ class _MazadScreenState extends State<MazadScreen> {
     return Container(
       height: 500,
       child: ListView.builder(
+          physics: BouncingScrollPhysics(),
+
           itemCount: mazads.length,
           itemBuilder: (ctx, i) {
             return buildCartListItem(mazads[i], context);

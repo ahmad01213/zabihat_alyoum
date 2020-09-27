@@ -1,18 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:zapihatalyoumapp/Bloc/DetailListBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/LocationBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/bloc_provider.dart';
-import 'package:zapihatalyoumapp/Bloc/side_menu_bloc.dart';
-import 'package:zapihatalyoumapp/DataLayer/Cart.dart';
+import 'package:zapihatalyoumnew/Bloc/DetailListBloc.dart';
+import 'package:zapihatalyoumnew/Bloc/LocationBloc.dart';
+import 'package:zapihatalyoumnew/Bloc/bloc_provider.dart';
+import 'package:zapihatalyoumnew/Bloc/side_menu_bloc.dart';
+import 'package:zapihatalyoumnew/DataLayer/Cart.dart';
 import 'package:http/http.dart' as http;
-import 'package:zapihatalyoumapp/DataLayer/Location.dart';
-import 'package:zapihatalyoumapp/DataLayer/Menu.dart';
-import 'package:zapihatalyoumapp/UI/Screens/ProductDetailsScreen.dart';
-import 'package:zapihatalyoumapp/helpers/DBHelper.dart';
+import 'package:zapihatalyoumnew/DataLayer/Location.dart';
+import 'package:zapihatalyoumnew/DataLayer/Menu.dart';
+import 'package:zapihatalyoumnew/UI/Screens/ProductDetailsScreen.dart';
+import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
 import '../../shared_data.dart';
 import 'MapScreen.dart';
 
@@ -21,7 +23,6 @@ class LocationScreen extends StatefulWidget {
   String completeCost;
   var cartData;
   bool isCartPage = true;
-
   LocationScreen(
       {this.cartData, this.completeCost, this.isCartPage, this.detailContext});
 
@@ -41,7 +42,9 @@ class _LocationScreenState extends State<LocationScreen> {
   Widget build(BuildContext context) {
     selectedPeriod = "الفترة الصباحية";
     selctedPayMent = "كاش (عند الإستلام)";
-    selectedLocation =locationData!=null? LatLng(locationData.latitude, locationData.longitude):LatLng(0.0,0.0);
+    selectedLocation = locationData != null
+        ? LatLng(locationData.latitude, locationData.longitude)
+        : LatLng(0.0, 0.0);
     final bloc = LocationBloc();
 //    bloc.selectLocation(Location(mapAdress: mapAdress, isMyLocation: true));
     return Scaffold(
@@ -61,6 +64,7 @@ class _LocationScreenState extends State<LocationScreen> {
         body: Stack(
           children: <Widget>[
             SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Column(
                 children: <Widget>[
                   Container(
@@ -160,7 +164,8 @@ class _LocationScreenState extends State<LocationScreen> {
                                             color: Colors.black38,
                                             style: BorderStyle.solid,
                                             width: 1)),
-                                    child: Text(userAdress!=null?userAdress:'...',
+                                    child: Text(
+                                        userAdress != null ? userAdress : '...',
                                         textAlign: TextAlign.end,
                                         style: TextStyle(
                                           color: mainColor,
@@ -340,9 +345,7 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   String selectedPeriod;
-
   String selctedPayMent;
-
   void saveDataSelected(dynamic data, int whichList) {
     if (whichList == 3) {
       selectedPeriod = data;
@@ -374,8 +377,57 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
+
+  // Replace with server token from firebase console settings.
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+
+  Future<Map<String, dynamic>> sendAndRetrieveMessage() async {
+    print('object');
+    await firebaseMessaging.requestNotificationPermissions(
+      const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: false),
+    );
+
+    await http.post(
+      'https://fcm.googleapis.com/fcm/send',
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'key=AAAAYF2Qs3Y:APA91bHxApIsIAvlnftr7hHIxY-PhuuaF3X5ia_Nc2nAawGY-yjVEQQxfYZp9regp3Yqhe3tf610bEqBP0QhcrgW-4_xRLRYfZ3BZ-ITCMgGIRLV4-0Y_rpL7MDgfv-1mzwm_oZlhV-i',
+      },
+      body: jsonEncode(
+        <String, dynamic>{
+          'notification': <String, dynamic>{
+            'body': 'ذبيحة اليوم - مدير الطلبات',
+            'title': 'لديكم طلب جديد'
+          },
+          'priority': 'high',
+          'data': <String, dynamic>{
+            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+            'id': '123',
+            'status': 'done'
+          },
+          'to': '/topics/all_fire_admins',
+        },
+      ),
+
+    ).then((value) => (res){
+       print("rossa :  ${res.toString()}");
+    });
+
+    final Completer<Map<String, dynamic>> completer =
+    Completer<Map<String, dynamic>>();
+
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        completer.complete(message);
+      },
+    );
+
+    return completer.future;
+  }
+
   var isloading = false;
   Future<void> confirmOrder(context) async {
+    print('products : ${widget.cartData.toString()}');
     Map<String, dynamic> params = Map();
     print("json : ${widget.cartData}");
     params['payment_type'] = selctedPayMent;
@@ -402,13 +454,14 @@ class _LocationScreenState extends State<LocationScreen> {
     setState(() {
       isloading = false;
     });
+    sendAndRetrieveMessage();
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
           return CupertinoAlertDialog(
             title: Text(
-              "شكرا لك تم استلام طلبك بنجاح سيقوم مندوبتا بتوصيل طلبك في اسرع وقت ممكن",
+              "شكرا لك تم استلام طلبك بنجاح سيقوم مندوبنا بتوصيل طلبك في اسرع وقت ممكن",
               style: TextStyle(color: Colors.black, fontSize: 15),
             ),
             content: Text(""),

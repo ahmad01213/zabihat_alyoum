@@ -1,23 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/Bloc/CartCountBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/DetailListBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/DetailQuantityBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/bloc_provider.dart';
-import 'package:zapihatalyoumapp/Bloc/side_menu_bloc.dart';
-import 'package:zapihatalyoumapp/DataLayer/Cart.dart';
-import 'package:zapihatalyoumapp/DataLayer/Menu.dart';
-import 'package:zapihatalyoumapp/DataLayer/Product.dart';
-import 'package:zapihatalyoumapp/helpers/DBHelper.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/Bloc/DetailListBloc.dart';
+import 'package:zapihatalyoumnew/Bloc/DetailQuantityBloc.dart';
+import 'package:zapihatalyoumnew/Bloc/bloc_provider.dart';
+import 'package:zapihatalyoumnew/Bloc/side_menu_bloc.dart';
+import 'package:zapihatalyoumnew/DataLayer/Cart.dart';
+import 'package:zapihatalyoumnew/DataLayer/Menu.dart';
+import 'package:zapihatalyoumnew/DataLayer/Product.dart';
+import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 import 'LocationScreen.dart';
-
 class ProductDetailsScreen extends StatelessWidget {
   List<int> listModel = [0, 0, 0, 0];
   Product product;
   int count = 1;
   String selectedSize;
+  String selectedPack;
   String slectedCut;
   String itemPrice;
   ProductDetailsScreen({this.product});
@@ -39,6 +38,7 @@ class ProductDetailsScreen extends StatelessWidget {
         backgroundColor: mainColor,
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: <Widget>[
             buildHeader(context),
@@ -46,6 +46,8 @@ class ProductDetailsScreen extends StatelessWidget {
             buildList(product.sizes, 1),
             buildListTitle('اختر التقطيع'),
             buildList(product.cuts, 2),
+            buildListTitle('اختر التغليف'),
+            buildList(product.packs, 3),
             buildListTitle('الكمية'),
             buildQuantityInputs(),
             buildButton(context)
@@ -182,6 +184,8 @@ class ProductDetailsScreen extends StatelessWidget {
       selectedSize = data.id;
     } else if (whichList == 2) {
       slectedCut = data.id;
+    }else if (whichList == 3) {
+      selectedPack = data.name;
     }
   }
 
@@ -260,10 +264,9 @@ class ProductDetailsScreen extends StatelessWidget {
                     if (validationMessage == "") {
                       addProductToCart();
                       showSnackBar("تمت الاضافة الي العربة");
-
-                      Navigator.of(context).pop();
+                      Navighttps://github.com/Purus/launch_reviewator.of(context).pop();
                       final bloc = BlocProvider.of<SideMenuBloc>(context);
-                      bloc.selectMenu(Menu(5));
+                      bloc.selectMenu(Menu(4));
                     } else {
                       showSnackBar(validationMessage);
                     }
@@ -311,7 +314,6 @@ class ProductDetailsScreen extends StatelessWidget {
   void orderNow(context) {
     final validationMessage = validateInputs();
     validationMessage == "" ? print("object") : showSnackBar(validationMessage);
-
     final size = product.sizes.firstWhere((size) => size.id == selectedSize);
     final cut = product.cuts.firstWhere((cut) => cut.id == slectedCut);
     final totalPrice = int.parse(size.price) * count;
@@ -319,6 +321,7 @@ class ProductDetailsScreen extends StatelessWidget {
         size_key: selectedSize,
         quantity: count.toString(),
         key: product.id,
+        id: product.id,
         cut_name: cut.name,
         name: product.title,
         image: product.image,
@@ -368,7 +371,6 @@ class ProductDetailsScreen extends StatelessWidget {
           );
         });
   }
-
   String validateInputs() {
     if (selectedSize == null) {
       return "اختر حجم الذبيحة";
@@ -378,7 +380,6 @@ class ProductDetailsScreen extends StatelessWidget {
       return "";
     }
   }
-
   void addProductToCart() {
     DBHelper.database(sql_cart_query);
     final size = product.sizes.firstWhere((size) => size.id == selectedSize);
@@ -388,10 +389,12 @@ class ProductDetailsScreen extends StatelessWidget {
         'user_cart',
         {
           'key': product.id + selectedSize + slectedCut,
-          'id': product.id + selectedSize + slectedCut,
+          'id': product.id ,
           'name': product.title,
           'quantity': count.toString(),
           'size_key': selectedSize,
+          'pack': selectedPack,
+          'price': size.price,
           'size_name': size.name,
           'item_price': size.price,
           'cut_key': cut.id,

@@ -1,37 +1,32 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:zapihatalyoumapp/DataLayer/Bid.dart';
-import 'package:zapihatalyoumapp/DataLayer/Mazad.dart';
-import 'package:zapihatalyoumapp/DataLayer/Pag.dart';
-import 'package:zapihatalyoumapp/DataLayer/Product.dart';
+import 'package:zapihatalyoumnew/DataLayer/Bid.dart';
+import 'package:zapihatalyoumnew/DataLayer/Mazad.dart';
+import 'package:zapihatalyoumnew/DataLayer/Pag.dart';
+import 'package:zapihatalyoumnew/DataLayer/Product.dart';
 import 'package:http/http.dart' as http;
-import 'package:zapihatalyoumapp/DataLayer/User.dart';
+import 'package:zapihatalyoumnew/DataLayer/User.dart';
 import '../shared_data.dart';
 import 'bloc.dart';
-
 class ProductsQueryBloc implements Bloc {
   readToken() async {
     final storage = new FlutterSecureStorage();
     token = await storage.read(key: "token");
     print('token$token');
   }
-
   final _controller = StreamController<List<Product>>();
-
   Stream<List<Product>> get productStream => _controller.stream;
-
   void getProducts() async {
-    readToken();
+   await readToken();
     if (productList == null) {
       final headers =
-          isRegistered() ? {"Authorization": "Bearer " + token} : null;
+           isRegistered() ? {"Authorization": "Bearer " + token} : null;
       List<Product> resaults = [];
       bank = [];
       final url = "https://thegradiant.com/zabihat_alyoum/api/products";
       final response = await http.post(url, headers: headers);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
-
       if (extractedData == null) {
         return;
       }
@@ -65,9 +60,15 @@ class ProductsQueryBloc implements Bloc {
         pages.add(Pag(text: page['text'], type: page['type']));
       });
       if (isRegistered()) {
-        user = User(
-            name: extractedData['user_details']['name'],
-            phone: extractedData['user_details']['phone']);
+
+        try {
+          user = User(
+              name: extractedData['user_details']['name'],
+              phone: extractedData['user_details']['phone']);
+        } on Exception catch (_) {
+          print('never reached');
+        }
+
       }
       extractedData['products'].forEach((productData) {
         List<ProductSize> sizes = [];
@@ -84,6 +85,12 @@ class ProductsQueryBloc implements Bloc {
               ProductCut(id: sizeData['id'].toString(), name: sizeData['cut']);
           cuts.add(cut);
         });
+        List<Productpack> packs = [];
+        productData['packs'].forEach((packItem) {
+          final pack =
+          Productpack(id: packItem['id'].toString(), name: packItem['pack']);
+          packs.add(pack);
+        });
         resaults.add(Product(
             id: productData['id'].toString(),
             image: productData['image'],
@@ -91,9 +98,10 @@ class ProductsQueryBloc implements Bloc {
             description: productData['desc'],
             cuts: cuts,
             sizes: sizes,
+            packs: packs,
             smallerPrice: sizes[0].price));
-        productList = resaults;
-        _controller.sink.add(resaults);
+            productList = resaults;
+            _controller.sink.add(resaults);
       });
     } else {
       _controller.sink.add(productList);

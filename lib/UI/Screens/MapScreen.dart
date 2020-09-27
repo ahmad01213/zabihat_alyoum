@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
-
+import 'package:zapihatalyoumnew/shared_data.dart';
 class MapScreen extends StatefulWidget {
   @override
   State<MapScreen> createState() => MapScreenState();
 }
-
 class MapScreenState extends State<MapScreen> {
   LatLng cameraLocation;
   Completer<GoogleMapController> _controller = Completer();
@@ -73,7 +70,7 @@ class MapScreenState extends State<MapScreen> {
                 onPressed: () {
                   mapLocation = cameraLocation;
                   print("maaaaap $cameraLocation");
-                  getLocationAdress();
+//                  getLocationAdress();
                 },
               ),
             ),
@@ -89,26 +86,26 @@ class MapScreenState extends State<MapScreen> {
     );
   }
 
-  Future<String> getLocationAdress() async {
-    try {
-      print("hoooy $mapLocation");
-      List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(
-          mapLocation.latitude, mapLocation.longitude);
-      final place = placemark[0];
-      final userAdress = place.thoroughfare +
-          "-" +
-          place.subLocality +
-          "-" +
-          place.locality +
-          "-" +
-          place.administrativeArea +
-          "-" +
-          place.country;
-      Navigator.pop(context, " ✔ " + userAdress);
-    } catch (exept) {
-      Navigator.pop(context, 'تم تحديد الموقع بنجاح ✔');
-    }
-  }
+//  Future<String> getLocationAdress() async {
+//    try {
+//      print("hoooy $mapLocation");
+//      List<Placemark> placemark = await Geolocator().placemarkFromCoordinates(
+//          mapLocation.latitude, mapLocation.longitude);
+//      final place = placemark[0];
+//      final userAdress = place.thoroughfare +
+//          "-" +
+//          place.subLocality +
+//          "-" +
+//          place.locality +
+//          "-" +
+//          place.administrativeArea +
+//          "-" +
+//          place.country;
+//      Navigator.pop(context, " ✔ " + userAdress);
+//    } catch (exept) {
+//      Navigator.pop(context, 'تم تحديد الموقع بنجاح ✔');
+//    }
+//  }
 
   Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;

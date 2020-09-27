@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:zapihatalyoumapp/DataLayer/Pag.dart';
-import 'package:zapihatalyoumapp/DataLayer/Product.dart';
+import 'package:zapihatalyoumnew/DataLayer/Pag.dart';
+import 'package:zapihatalyoumnew/DataLayer/Product.dart';
 import 'DataLayer/User.dart';
 import 'DataLayer/cuts.dart';
 
@@ -26,7 +27,8 @@ String firetoken = "";
 User user;
 List mazads = [];
 String token;
-isRegistered() {
+isRegistered()  {
+
   if (token != null) {
     return true;
   } else {
@@ -35,7 +37,7 @@ isRegistered() {
 }
 
 final sql_cart_query =
-    'CREATE TABLE user_cart(id TEXT PRIMARY KEY , key TEXT, name TEXT,quantity TEXT, size_key TEXT,size_name TEXT, item_price TEXT,cut_key TEXT, cut_name TEXT,image TEXT)';
+    'CREATE TABLE user_cart(id TEXT PRIMARY KEY , key TEXT, name TEXT,quantity TEXT, size_key TEXT,size_name TEXT,pack TEXT, item_price TEXT, price TEXT,cut_key TEXT, cut_name TEXT,image TEXT)';
 final sql_orders_query =
     'CREATE TABLE user_orders(id TEXT PRIMARY KEY , price TEXT,date TEXT)';
 Color mainColor = Color(0xFFF79F1F);

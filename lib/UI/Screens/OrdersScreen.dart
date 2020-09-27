@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
-import 'package:zapihatalyoumapp/DataLayer/Order.dart';
+import 'package:zapihatalyoumnew/DataLayer/Order.dart';
 
 import '../../shared_data.dart';
 
@@ -65,6 +65,8 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
 
   Widget buildList() {
     return ListView.builder(
+        physics: BouncingScrollPhysics(),
+
         itemCount: orders.length,
         itemBuilder: (ctx, i) {
           return buildListItem(orders[i]);
@@ -120,7 +122,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
-                    width: 100,
+                    width: 120,
                     child: Text(
                       "إجمالي السعر",
                       maxLines: 1,
@@ -137,7 +139,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                     width: 50,
                   ),
                   Text(
-                   "  R.S",
+                   "${order.totalCost}  R.S",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -204,7 +206,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
     final headers = {"Authorization": "Bearer " + token};
     print("url  :  $url");
     setState(() {
-      isloading = true;
+    isloading = true;
     });
     final response = await http.post(url, headers: headers);
     print("ressss : ${response.body}");
@@ -213,12 +215,12 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
       final orderData = Order(
           id: order['id'].toString(),
           date: order['created_at'].toString().substring(0, 10),
-          totalCost: order['total_cost']);
-      orders.add(orderData);
+          totalCost: order['totalCost'].toString());
+          orders.add(orderData);
     });
-    orders = orders.reversed.toList();
-    setState(() {
-      isloading = false;
-    });
+          orders = orders.reversed.toList();
+          setState(() {
+          isloading = false;
+          });
   }
 }

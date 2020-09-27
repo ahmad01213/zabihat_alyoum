@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:zapihatalyoumapp/DataLayer/Orders.dart';
-import 'package:zapihatalyoumapp/helpers/DBHelper.dart';
+import 'package:zapihatalyoumnew/DataLayer/Orders.dart';
+import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
 import '../shared_data.dart';
 import 'bloc.dart';
 

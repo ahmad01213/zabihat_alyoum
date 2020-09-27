@@ -6,6 +6,7 @@ class Product {
   String smallerPrice;
   List<ProductSize> sizes;
   List<ProductCut> cuts;
+  List<Productpack> packs;
 
   Product(
       {this.id,
@@ -14,6 +15,7 @@ class Product {
       this.image,
       this.smallerPrice,
       this.sizes,
+        this.packs,
       this.cuts});
 }
 
@@ -22,7 +24,11 @@ class ProductCut {
   String name;
   ProductCut({this.id, this.name});
 }
-
+class Productpack {
+  String id;
+  String name;
+  Productpack({this.id, this.name});
+}
 class ProductSize {
   String id;
   String name;

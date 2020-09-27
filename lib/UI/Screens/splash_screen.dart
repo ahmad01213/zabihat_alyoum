@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/Bloc/ProductsBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/side_menu_bloc.dart';
-import 'package:zapihatalyoumapp/UI/Screens/ProductsScreen.dart';
+import 'package:zapihatalyoumnew/Bloc/ProductsBloc.dart';
+import 'package:zapihatalyoumnew/Bloc/side_menu_bloc.dart';
+import 'package:zapihatalyoumnew/UI/Screens/ProductsScreen.dart';
 
 class SplashScreen extends StatelessWidget {
   @override

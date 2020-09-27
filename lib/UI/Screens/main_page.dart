@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/Bloc/side_menu_bloc.dart';
-import 'package:zapihatalyoumapp/DataLayer/Menu.dart';
-import 'package:zapihatalyoumapp/UI/Screens/my_account_screen.dart';
+import 'package:zapihatalyoumnew/Bloc/side_menu_bloc.dart';
+import 'package:zapihatalyoumnew/DataLayer/Menu.dart';
+import 'package:zapihatalyoumnew/UI/Screens/my_account_screen.dart';
 
 import '../../shared_data.dart';
 import 'AboutUsScreen.dart';
@@ -26,6 +26,8 @@ class MainPage extends StatelessWidget {
                 key: _scaffoldKey,
                 endDrawer: Drawer(
                   child: ListView(
+                    physics: BouncingScrollPhysics(),
+
                     children: [
                       Container(
                         alignment: Alignment.topCenter,
@@ -39,7 +41,6 @@ class MainPage extends StatelessWidget {
                       ),
                       divider(),
                       rowSide(Menu(1), context, bloc, titles[0]),
-                      rowSide(Menu(2), context, bloc, titles[1]),
                       rowSide(Menu(3), context, bloc, titles[2]),
                       rowSide(Menu(4), context, bloc, titles[3]),
                       rowSide(Menu(5), context, bloc, titles[4]),
@@ -122,8 +123,7 @@ class MainPage extends StatelessWidget {
       switch (menu.index) {
         case 1:
           return ProductsScreen();
-        case 2:
-          return OurAccounts();
+
         case 3:
           return MyOrdersScreen();
         case 4:

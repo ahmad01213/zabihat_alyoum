@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/Bloc/CartDataBloc.dart';
-import 'package:zapihatalyoumapp/Bloc/bloc_provider.dart';
-import 'package:zapihatalyoumapp/Bloc/side_menu_bloc.dart';
-import 'package:zapihatalyoumapp/DataLayer/Cart.dart';
-import 'package:zapihatalyoumapp/DataLayer/Menu.dart';
-import 'package:zapihatalyoumapp/UI/Screens/LocationScreen.dart';
-import 'package:zapihatalyoumapp/helpers/DBHelper.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/Bloc/CartDataBloc.dart';
+import 'package:zapihatalyoumnew/Bloc/bloc_provider.dart';
+import 'package:zapihatalyoumnew/Bloc/side_menu_bloc.dart';
+import 'package:zapihatalyoumnew/DataLayer/Cart.dart';
+import 'package:zapihatalyoumnew/DataLayer/Menu.dart';
+import 'package:zapihatalyoumnew/UI/Screens/LocationScreen.dart';
+import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 
 class CartScreen extends StatelessWidget {
   double totalCost = 0.0;
@@ -39,6 +39,8 @@ class CartScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 100),
                   child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
+
                       itemCount: data == null ? 0 : data.length,
                       itemBuilder: (ctx, i) {
                         print('total stream $totalCost');
@@ -222,7 +224,7 @@ class CartScreen extends StatelessWidget {
     print('total bottom $totalCost');
     return Container(
       width: double.infinity,
-      height: 100,
+      height: 120,
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
-import 'package:zapihatalyoumapp/DataLayer/User.dart';
+import 'package:zapihatalyoumnew/DataLayer/User.dart';
 
 import '../../shared_data.dart';
 
@@ -25,6 +25,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       alignment: Alignment.topCenter,
       height: MediaQuery.of(context).size.height - 170,
       child: ListView(
+        physics: BouncingScrollPhysics(),
         children: <Widget>[
           _buildForm(context),
           SizedBox(

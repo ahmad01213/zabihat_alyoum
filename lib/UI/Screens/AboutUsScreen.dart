@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 
 class AboutUsScreen extends StatelessWidget {
   @override
@@ -11,6 +11,7 @@ class AboutUsScreen extends StatelessWidget {
       alignment: Alignment.center,
       height: MediaQuery.of(context).size.height - 170,
       child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Text(
           aboutus.text,
           style: TextStyle(

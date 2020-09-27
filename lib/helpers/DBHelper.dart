@@ -1,8 +1,8 @@
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:path/path.dart' as path;
 import 'package:sqflite/sqlite_api.dart';
-import 'package:zapihatalyoumapp/DataLayer/Cart.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/DataLayer/Cart.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 
 class DBHelper {
   static Future<Database> database(String query) async {

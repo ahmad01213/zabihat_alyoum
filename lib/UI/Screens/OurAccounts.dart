@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 
 class OurAccounts extends StatelessWidget {
   @override

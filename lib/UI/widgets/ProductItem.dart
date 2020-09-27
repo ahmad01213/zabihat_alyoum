@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:zapihatalyoumapp/DataLayer/Product.dart';
-import 'package:zapihatalyoumapp/UI/Screens/ProductDetailsScreen.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:zapihatalyoumnew/DataLayer/Product.dart';
+import 'package:zapihatalyoumnew/UI/Screens/ProductDetailsScreen.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 
 class ProductItem extends StatelessWidget {
   Product product;
@@ -93,12 +93,12 @@ class ProductItem extends StatelessWidget {
                 width: 130,
                 height: 25,
                 child: Text(
-                  ' يبدأ من  ${product.smallerPrice} ربال  ',
+                  ' يبدأ من  ${product.smallerPrice} ريال  ',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: mainColor,
+                    color:Colors.black,
                   ),
                 ),
               )

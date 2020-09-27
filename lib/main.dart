@@ -1,27 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:zapihatalyoumapp/Bloc/CartCountBloc.dart';
-import 'package:zapihatalyoumapp/UI/Screens/AboutUsScreen.dart';
-import 'package:zapihatalyoumapp/UI/Screens/CartScreen.dart';
-import 'package:zapihatalyoumapp/UI/Screens/ContactUsScreen.dart';
-import 'package:zapihatalyoumapp/UI/Screens/MazadScreen.dart';
-import 'package:zapihatalyoumapp/UI/Screens/OrdersScreen.dart';
-import 'package:zapihatalyoumapp/UI/Screens/OurAccounts.dart';
-import 'package:zapihatalyoumapp/UI/Screens/ProductsScreen.dart';
-import 'package:zapihatalyoumapp/UI/Screens/my_account_screen.dart';
-import 'package:zapihatalyoumapp/shared_data.dart';
+import 'package:launch_review/launch_review.dart';
+import 'package:zapihatalyoumnew/UI/Screens/AboutUsScreen.dart';
+import 'package:zapihatalyoumnew/UI/Screens/CartScreen.dart';
+import 'package:zapihatalyoumnew/UI/Screens/ContactUsScreen.dart';
+import 'package:zapihatalyoumnew/UI/Screens/MazadScreen.dart';
+import 'package:zapihatalyoumnew/UI/Screens/OrdersScreen.dart';
+import 'package:zapihatalyoumnew/UI/Screens/ProductsScreen.dart';
+import 'package:zapihatalyoumnew/UI/Screens/my_account_screen.dart';
+import 'package:zapihatalyoumnew/shared_data.dart';
 import 'Bloc/bloc_provider.dart';
 import 'Bloc/side_menu_bloc.dart';
 import 'DataLayer/Menu.dart';
-
 void main() => runApp(MainWidget());
-
 class MainWidget extends StatefulWidget {
   @override
   _MainWidgetState createState() => _MainWidgetState();
 }
-
 class _MainWidgetState extends State<MainWidget> {
   String appBarTitle = "ذبيحة اليوم";
   List<IconData> icons = [
@@ -38,18 +35,21 @@ class _MainWidgetState extends State<MainWidget> {
   List<String> titles = [
     "طلب ذبيحة",
     'المزاد',
-    "حساباتنا",
     "طلباتي",
     "سلة المشتريات",
     "اتصل بنا",
     "من نحن",
-    "شارك التطبيق",
+    "قيم التطبيق",
     "حسابي"
   ];
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     getUserLocation();
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: mainColor, //or set color with: Color(0xFF0000FF)
+    ));
     final bloc = SideMenuBloc();
     return BlocProvider<SideMenuBloc>(
       bloc: bloc,
@@ -68,6 +68,10 @@ class _MainWidgetState extends State<MainWidget> {
           brightness: Brightness.light,
           primaryColor: mainColor,
           accentColor: mainColor,
+          pageTransitionsTheme: PageTransitionsTheme(builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          }),
         ),
         home: StreamBuilder(
             stream: bloc.menuStream,
@@ -80,6 +84,7 @@ class _MainWidgetState extends State<MainWidget> {
                     key: _scaffoldKey,
                     drawer: Drawer(
                       child: ListView(
+                        physics: BouncingScrollPhysics(),
                         children: [
                           Container(
                             alignment: Alignment.topCenter,
@@ -99,7 +104,6 @@ class _MainWidgetState extends State<MainWidget> {
                           rowSide(Menu(6), context, bloc, titles[5]),
                           rowSide(Menu(7), context, bloc, titles[6]),
                           rowSide(Menu(8), context, bloc, titles[7]),
-                          rowSide(Menu(9), context, bloc, titles[8]),
                           SizedBox(
                             height: 50,
                           )
@@ -214,22 +218,22 @@ class _MainWidgetState extends State<MainWidget> {
           return ProductsScreen();
         case 2:
           return MazadScreen();
+
         case 3:
-          return OurAccounts();
-        case 4:
           return MyOrdersScreen();
-        case 5:
+        case 4:
           return CartScreen();
-        case 6:
+        case 5:
           return ContactUsScreen();
-        case 7:
+        case 6:
           return AboutUsScreen();
-        case 9:
-          return MyAccountScreen();
+        case 7:
+          LaunchReview.launch(androidAppId: "com.aebrahima830.zapihatalyoum_app_android",
+              iOSAppId: "585027354");
+          return ProductsScreen();
           break;
         case 8:
-//          Share.share("   حمل تطبيق ذبيحة اليوم   $appUrl");
-          return ProductsScreen();
+          return MyAccountScreen();
         default:
           {
             return ProductsScreen();
