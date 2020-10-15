@@ -1,18 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:zapihatalyoumnew/DataLayer/Order.dart';
-
 import '../../shared_data.dart';
-
 class MyOrdersScreen extends StatefulWidget {
   @override
   _MyOrdersScreenState createState() => _MyOrdersScreenState();
 }
-
 class _MyOrdersScreenState extends State<MyOrdersScreen> {
   List<Order> orders = [];
   @override
@@ -193,16 +189,14 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
       ),
     );
   }
-
   Widget DataRow(name, value) {
     return Row(
       children: <Widget>[],
     );
   }
-
   bool isloading = false;
   getOrders() async {
-    final url = 'https://thegradiant.com/zabihat_alyoum/api/userorders';
+    final url = 'https://www.appweb.host/zabihat_alyoum/api/userorders';
     final headers = {"Authorization": "Bearer " + token};
     print("url  :  $url");
     setState(() {

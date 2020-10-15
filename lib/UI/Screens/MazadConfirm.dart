@@ -13,21 +13,22 @@ import 'package:http/http.dart' as http;
 import 'package:zapihatalyoumnew/DataLayer/Location.dart';
 import 'package:zapihatalyoumnew/DataLayer/Menu.dart';
 import 'package:zapihatalyoumnew/UI/Screens/ProductDetailsScreen.dart';
-import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
 import '../../shared_data.dart';
 import 'MapScreen.dart';
-class LocationScreen extends StatefulWidget {
+class MazadConfirm extends StatefulWidget {
   var detailContext;
-  String completeCost;
-  var cartData;
+  double cost;
+  String bidId;
   bool isCartPage = true;
-  LocationScreen(
-      {this.cartData, this.completeCost, this.isCartPage, this.detailContext});
+  Function onCnfirm;
+
+  MazadConfirm({this.isCartPage, this.detailContext,this.bidId,this.onCnfirm});
+
   @override
-  _LocationScreenState createState() => _LocationScreenState();
+  _MazadConfirmState createState() => _MazadConfirmState();
 }
 
-class _LocationScreenState extends State<LocationScreen> {
+class _MazadConfirmState extends State<MazadConfirm> {
   bool isLoading = false;
   String notes = 'لايوجد';
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -35,6 +36,7 @@ class _LocationScreenState extends State<LocationScreen> {
   LatLng selectedLocation;
   String address = userAdress;
   String mapAdress = ' اختر من الخريطة';
+
   @override
   Widget build(BuildContext context) {
     selectedPeriod = "الفترة الصباحية";
@@ -268,12 +270,11 @@ class _LocationScreenState extends State<LocationScreen> {
                       child: TextFormField(
                         decoration: InputDecoration(labelText: 'ملاحظات'),
                         onChanged: (String value) {
-                          if(value.isNotEmpty)notes = value;
+                          if (value.isNotEmpty) notes = value;
                         },
                       ),
                     ),
-                  )
-,
+                  ),
                   Container(
                     height: 50,
                     width: double.infinity,
@@ -284,7 +285,9 @@ class _LocationScreenState extends State<LocationScreen> {
                           side: BorderSide(color: Colors.transparent)),
                       color: mainColor,
                       onPressed: () {
-                        selctedPayMent!=null? confirmOrder(context):showSnackBar('الرجاء اختيار طريقة الدفع');
+                        selctedPayMent != null
+                            ? confirmOrder(context)
+                            : showSnackBar('الرجاء اختيار طريقة الدفع');
                       },
                       child: Text(
                         'إرسال الطلب',
@@ -322,7 +325,6 @@ class _LocationScreenState extends State<LocationScreen> {
         ));
   }
 
-
   Widget buildListTitle(String title) {
     return Container(
       alignment: Alignment.topRight,
@@ -357,6 +359,7 @@ class _LocationScreenState extends State<LocationScreen> {
 
   String selectedPeriod;
   String selctedPayMent;
+
   void saveDataSelected(dynamic data, int whichList) {
     if (whichList == 3) {
       selectedPeriod = data;
@@ -364,6 +367,7 @@ class _LocationScreenState extends State<LocationScreen> {
       selctedPayMent = data;
     }
   }
+
   void showSnackBar(message) {
     scaffoldKey?.currentState?.showSnackBar(SnackBar(
       duration: Duration(seconds: 2),
@@ -373,6 +377,7 @@ class _LocationScreenState extends State<LocationScreen> {
       ),
     ));
   }
+
   Widget buildlistItemTitle(title) {
     return Container(
       width: 250,
@@ -396,44 +401,46 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 
-
   // Replace with server token from firebase console settings.
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
   Future<Map<String, dynamic>> sendAndRetrieveMessage() async {
     print('object');
     await firebaseMessaging.requestNotificationPermissions(
-      const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: false),
+      const IosNotificationSettings(
+          sound: true, badge: true, alert: true, provisional: false),
     );
 
-    await http.post(
-      'https://fcm.googleapis.com/fcm/send',
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'key=AAAAYF2Qs3Y:APA91bHxApIsIAvlnftr7hHIxY-PhuuaF3X5ia_Nc2nAawGY-yjVEQQxfYZp9regp3Yqhe3tf610bEqBP0QhcrgW-4_xRLRYfZ3BZ-ITCMgGIRLV4-0Y_rpL7MDgfv-1mzwm_oZlhV-i',
-      },
-      body: jsonEncode(
-        <String, dynamic>{
-          'notification': <String, dynamic>{
-            'body': 'ذبيحة اليوم - مدير الطلبات',
-            'title': 'لديكم طلب جديد'
+    await http
+        .post(
+          'https://fcm.googleapis.com/fcm/send',
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+            'Authorization':
+                'key=AAAAYF2Qs3Y:APA91bHxApIsIAvlnftr7hHIxY-PhuuaF3X5ia_Nc2nAawGY-yjVEQQxfYZp9regp3Yqhe3tf610bEqBP0QhcrgW-4_xRLRYfZ3BZ-ITCMgGIRLV4-0Y_rpL7MDgfv-1mzwm_oZlhV-i',
           },
-          'priority': 'high',
-          'data': <String, dynamic>{
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-            'id': '123',
-            'status': 'done'
-          },
-          'to': '/topics/all_fire_admins',
-        },
-      ),
-
-    ).then((value) => (res){
-       print("rossa :  ${res.toString()}");
-    });
+          body: jsonEncode(
+            <String, dynamic>{
+              'notification': <String, dynamic>{
+                'body': 'ذبيحة اليوم - مدير الطلبات',
+                'title': 'المزاد : تم إرسال تفاصيل العنوان'
+              },
+              'priority': 'high',
+              'data': <String, dynamic>{
+                'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                'id': '123',
+                'status': 'done'
+              },
+              'to': '/topics/all_fire_admins',
+            },
+          ),
+        )
+        .then((value) => (res) {
+              print("rossa :  ${res.toString()}");
+            });
 
     final Completer<Map<String, dynamic>> completer =
-    Completer<Map<String, dynamic>>();
+        Completer<Map<String, dynamic>>();
 
     firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -445,21 +452,56 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   var isloading = false;
+  Widget loading() {
+    return Center(
+      child: Container(
+        child: SpinKitRing(
+          duration: Duration(milliseconds: 500),
+          color: mainColor,
+          size: 40,
+          lineWidth: 5,
+        ),
+        width: 100,
+        height: 100,
+      ),
+    );
+  }
   Future<void> confirmOrder(context) async {
-    if(selectedLocation == null){
+    showDialog(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            height: 100,
+            width: 100,
+            child: AlertDialog(
+              title: loading(),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+          );
+        });
+    if (selectedLocation == null) {
       selectedLocation = LatLng(locationData.latitude, locationData.longitude);
     }
-    print('products : ${widget.cartData.toString()}');
     Map<String, dynamic> params = Map();
-    print("json : ${widget.cartData}");
     params['payment_type'] = selctedPayMent;
-    params['products'] = "${widget.cartData.toString()}";
+    params['products'] = "fd";
     params['lat'] = selectedLocation.latitude.toString();
     params['lng'] = selectedLocation.longitude.toString();
-    params['total_cost'] = widget.completeCost;
+    params['total_cost'] = '32';
     params['notes'] = notes;
     params['selected_period'] = selectedPeriod;
     params['accepted'] = "0";
+
+    String detail = selctedPayMent +
+        "-" +
+        selectedPeriod +
+        "-" +
+        notes +
+        "#" +
+        selectedLocation.latitude.toString() +
+        "#" +
+        selectedLocation.longitude.toString();
     Map<String, String> headers = {
       'Authorization': 'Bearer $token',
     };
@@ -467,17 +509,27 @@ class _LocationScreenState extends State<LocationScreen> {
       isloading = true;
     });
     final uri = "https://www.appweb.host/zabihat_alyoum/api/useraddorder";
-
     final response = await http.post(
       uri,
       headers: isRegistered() ? headers : null,
       body: params,
     );
-    print("response  :  ${response.statusCode}");
+    Map<String, dynamic> budparams = Map();
+    budparams['details']=detail;
+    budparams['bidId']=widget.bidId;
+    final biduri = "https://www.appweb.host/zabihat_alyoum/api/mazads/updatebid";
+    final bidresponse = await http.post(
+      biduri,
+      headers: isRegistered() ? headers : null,
+      body:budparams,
+    );
+    print('status : ${bidresponse.body}');
     setState(() {
       isloading = false;
     });
     sendAndRetrieveMessage();
+    widget.onCnfirm();
+    Navigator.of(context).pop();
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -499,13 +551,12 @@ class _LocationScreenState extends State<LocationScreen> {
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.pop(context, 'yes');
+                  Navigator.pop(context);
                 },
               ),
             ],
           );
         });
-    DBHelper.clearCart();
   }
 
   Widget buildList(List<dynamic> data, int whichList) {
@@ -539,16 +590,7 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   Future<void> showSuccessDialog(context, newCount) async {
-    clearCart();
     notifyAdmin();
-    DBHelper.insertorder(
-        'user_orders',
-        {
-          'id': newCount.toString(),
-          'price': widget.completeCost.toString(),
-          'date': new DateTime.now().toString()
-        },
-        sql_orders_query);
     await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -559,7 +601,7 @@ class _LocationScreenState extends State<LocationScreen> {
           textAlign: TextAlign.end,
         ),
         content: Text(
-          "شكرا لك .. تم استلام طلبكم بنجاح , وسيتم التواصل معكم في أقرب وقت ممكن ",
+          "شكرا لك .. تم ارسال البيانات بنجاح ",
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -595,14 +637,11 @@ class _LocationScreenState extends State<LocationScreen> {
           "to": "/topics/zabaeh_el_riad",
           "notification": {
             "title": "مدير الطلبات",
-            "body": "لديكم طلب جديد",
+            "body": "تم تأكيد المزاد",
             "mutable_content": true,
             "sound": "alarm"
           }
         }));
   }
-
-  void clearCart() {
-    DBHelper.clearCart();
-  }
 }
+

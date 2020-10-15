@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +9,7 @@ import 'package:zapihatalyoumnew/UI/Screens/AboutUsScreen.dart';
 import 'package:zapihatalyoumnew/UI/Screens/CartScreen.dart';
 import 'package:zapihatalyoumnew/UI/Screens/ContactUsScreen.dart';
 import 'package:zapihatalyoumnew/UI/Screens/MazadScreen.dart';
+import 'package:zapihatalyoumnew/UI/Screens/NotificationsScreen.dart';
 import 'package:zapihatalyoumnew/UI/Screens/OrdersScreen.dart';
 import 'package:zapihatalyoumnew/UI/Screens/ProductsScreen.dart';
 import 'package:zapihatalyoumnew/UI/Screens/my_account_screen.dart';
@@ -14,7 +17,11 @@ import 'package:zapihatalyoumnew/shared_data.dart';
 import 'Bloc/bloc_provider.dart';
 import 'Bloc/side_menu_bloc.dart';
 import 'DataLayer/Menu.dart';
-void main() => runApp(MainWidget());
+import 'helpers/MyHttpOverrides.dart';
+void main() {
+  HttpOverrides.global = new MyHttpOverrides();
+  runApp(MainWidget());
+}
 class MainWidget extends StatefulWidget {
   @override
   _MainWidgetState createState() => _MainWidgetState();
@@ -30,7 +37,7 @@ class _MainWidgetState extends State<MainWidget> {
     Icons.contact_phone,
     Icons.group,
     Icons.share,
-    Icons.supervised_user_circle,
+    Icons.notifications,
   ];
   List<String> titles = [
     "طلب ذبيحة",
@@ -40,7 +47,8 @@ class _MainWidgetState extends State<MainWidget> {
     "اتصل بنا",
     "من نحن",
     "قيم التطبيق",
-    "حسابي"
+    "حسابي",
+    "الإشعارات"
   ];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -104,6 +112,7 @@ class _MainWidgetState extends State<MainWidget> {
                           rowSide(Menu(6), context, bloc, titles[5]),
                           rowSide(Menu(7), context, bloc, titles[6]),
                           rowSide(Menu(8), context, bloc, titles[7]),
+                          rowSide(Menu(9), context, bloc, titles[8]),
                           SizedBox(
                             height: 50,
                           )
@@ -234,6 +243,8 @@ class _MainWidgetState extends State<MainWidget> {
           break;
         case 8:
           return MyAccountScreen();
+        case 9:
+          return NotificationsScreen();
         default:
           {
             return ProductsScreen();

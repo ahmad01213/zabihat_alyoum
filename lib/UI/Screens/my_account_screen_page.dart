@@ -8,34 +8,48 @@ import 'package:http/http.dart' as http;
 import 'package:zapihatalyoumnew/DataLayer/User.dart';
 
 import '../../shared_data.dart';
-
-class MyAccountScreen extends StatefulWidget {
+class MyAccountScreenPage extends StatefulWidget {
+  bool status;
+  MyAccountScreenPage({this.status=false});
   @override
-  _MyAccountScreenState createState() => _MyAccountScreenState();
+  _MyAccountScreenPageState createState() => _MyAccountScreenPageState();
 }
-
-class _MyAccountScreenState extends State<MyAccountScreen> {
+class _MyAccountScreenPageState extends State<MyAccountScreenPage> {
   bool isloading = false;
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> formData = {};
   @override
   Widget build(BuildContext context) {
-    return  Container(
-      margin: EdgeInsets.fromLTRB(30, 30, 30, 0),
-      alignment: Alignment.topCenter,
-      height: MediaQuery.of(context).size.height - 170,
-      child: ListView(
-        physics: BouncingScrollPhysics(),
-        children: <Widget>[
-          _buildForm(context),
-          SizedBox(
-            height: 20,
-          ),
-          isRegistered() ? Container() : buildSocondButton(context),
-          SizedBox(
-            height: 20,
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.white, //change your color here
+        ),
+        title: Text(
+          'الحساب',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        centerTitle: true,
+        backgroundColor: mainColor,
+      ),
+      body: Container(
+        margin: EdgeInsets.fromLTRB(30, 30, 30, 0),
+        alignment: Alignment.topCenter,
+        height: MediaQuery.of(context).size.height - 170,
+        child: ListView(
+          physics: BouncingScrollPhysics(),
+          children: <Widget>[
+            _buildForm(context),
+            SizedBox(
+              height: 20,
+            ),
+            isRegistered() ? Container() : buildSocondButton(context),
+            SizedBox(
+              height: 20,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -70,26 +84,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 //                    lineWidth: 2,
                     )
                 : _buildSubmitButton(context),
-            InkWell(
-              onTap: (){
-                setState(() {
-                  token = null;
-                });
-                final storage = new FlutterSecureStorage();
-                storage.delete(key: 'token');
-              },
-              child: isRegistered()?Text(
-                'تسجيل الخروج',
-                style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54),
-              ):Container(),
-            ),
           ],
         ));
   }
-
   Widget _buildNameField() {
     return TextFormField(
       initialValue: isRegistered() ? user.name : "",
@@ -108,10 +105,11 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
 
   Widget _buildPasswordField() {
     return TextFormField(
+      obscureText: true,
       decoration: InputDecoration(
         labelText: 'كلمة السر',
+
       ),
-      obscureText: true,
       validator: (String value) {
         if (value.isEmpty) {
           return 'الرجاء كتابة كلمة السر';
@@ -157,6 +155,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             ),
           );
   }
+
   loginRegister(Map<String, dynamic> params) async {
     params['device_token'] = firetoken;
     setState(() {
@@ -181,7 +180,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       user = User(
           name: jsonData['success']['name'],
           phone: jsonData['success']['phone']);
-      alert("شكرا لك تم تسجيل الدخول بنجاح");
+      alert("شكرا لك تم تسجيل الدخول بنجاح, يمكنك الان تنفيذ طلبك");
       setState(() {
         isloading = false;
       });
@@ -229,6 +228,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
               ),
             ],
@@ -260,5 +260,11 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       _formKey.currentState.save(); //onSaved is called!
       loginRegister(formData);
     }
+  }
+
+  @override
+  void initState() {
+    isRegister=widget.status;
+    super.initState();
   }
 }

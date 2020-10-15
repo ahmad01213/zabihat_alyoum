@@ -24,7 +24,7 @@ class ProductsQueryBloc implements Bloc {
            isRegistered() ? {"Authorization": "Bearer " + token} : null;
       List<Product> resaults = [];
       bank = [];
-      final url = "https://thegradiant.com/zabihat_alyoum/api/products";
+      final url = "https://www.appweb.host/zabihat_alyoum/api/products";
       final response = await http.post(url, headers: headers);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
@@ -32,29 +32,32 @@ class ProductsQueryBloc implements Bloc {
       }
       periods = [];
       pages = [];
+      mazads = [];
       print(extractedData);
       extractedData['periods'].forEach((periodsData) {
         periods.add(periodsData['name']);
       });
       extractedData['mazads'].forEach((mazad) {
-        List<Bid> bids = [];
-        extractedData['mazads'][0]['bids'].forEach((bid) {
-          bids.add(Bid(
-              name: bid['user_name'],
-              bid: bid['bid'],
-              created_at: bid['created_at']));
-        });
-        mazads = [];
-        mazads.add(Mazad(
-            image: mazad['image'],
-            name: mazad['name'],
-            bids: bids,
-            id: mazad['id'].toString(),
-            desc: mazad['desc'],
-            endttime: mazad['endtime'],
-            starttime: mazad['starttime'],
-            minprice: mazad['minprice'].toString()));
-        print('mazads${mazads.length}');
+               if(mazad['published']=="1"){
+                 List<Bid> bids = [];
+                 extractedData['mazads'][0]['bids'].forEach((bid) {
+                   bids.add(Bid(
+                       name: bid['user_name'],
+                       bid: bid['bid'],
+                       created_at: bid['created_at']));
+                 });
+                 mazads.add(Mazad(
+                     image: mazad['image'],
+                     name: mazad['name'],
+                     bids: bids,
+                     id: mazad['id'].toString(),
+                     desc: mazad['desc'],
+                     endttime: mazad['endtime'],
+                     starttime: mazad['starttime'],
+                     minprice: mazad['minprice'].toString()));
+                 print('mazads${mazads.length}');
+               }
+               print(" mazsad  ${mazads.length}");
       });
       extractedData['pages'].forEach((page) {
         pages.add(Pag(text: page['text'], type: page['type']));
@@ -65,7 +68,7 @@ class ProductsQueryBloc implements Bloc {
           user = User(
               name: extractedData['user_details']['name'],
               phone: extractedData['user_details']['phone']);
-        } on Exception catch (_) {
+        }   catch (e) {
           print('never reached');
         }
 
@@ -121,3 +124,6 @@ class ProductsQueryBloc implements Bloc {
     _controller.close();
   }
 }
+
+
+

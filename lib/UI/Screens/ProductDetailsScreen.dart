@@ -8,9 +8,11 @@ import 'package:zapihatalyoumnew/Bloc/side_menu_bloc.dart';
 import 'package:zapihatalyoumnew/DataLayer/Cart.dart';
 import 'package:zapihatalyoumnew/DataLayer/Menu.dart';
 import 'package:zapihatalyoumnew/DataLayer/Product.dart';
+import 'package:zapihatalyoumnew/UI/Screens/my_account_screen_page.dart';
 import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
 import 'package:zapihatalyoumnew/shared_data.dart';
 import 'LocationScreen.dart';
+
 class ProductDetailsScreen extends StatelessWidget {
   List<int> listModel = [0, 0, 0, 0];
   Product product;
@@ -19,8 +21,11 @@ class ProductDetailsScreen extends StatelessWidget {
   String selectedPack;
   String slectedCut;
   String itemPrice;
+
   ProductDetailsScreen({this.product});
+
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +64,10 @@ class ProductDetailsScreen extends StatelessWidget {
 
   Widget buildHeader(context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
         elevation: 10.0,
@@ -184,7 +192,7 @@ class ProductDetailsScreen extends StatelessWidget {
       selectedSize = data.id;
     } else if (whichList == 2) {
       slectedCut = data.id;
-    }else if (whichList == 3) {
+    } else if (whichList == 3) {
       selectedPack = data.name;
     }
   }
@@ -219,7 +227,7 @@ class ProductDetailsScreen extends StatelessWidget {
                       count.toString(),
                       textAlign: TextAlign.center,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     );
                   }),
             ),
@@ -238,7 +246,6 @@ class ProductDetailsScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget buildButton(context) {
     return Container(
       height: 70,
@@ -263,8 +270,8 @@ class ProductDetailsScreen extends StatelessWidget {
                     final validationMessage = validateInputs();
                     if (validationMessage == "") {
                       addProductToCart();
-                      showSnackBar("تمت الاضافة الي العربة");
-                      Navighttps://github.com/Purus/launch_reviewator.of(context).pop();
+//                      showSnackBar("تمت الاضافة الي العربة");
+                      Navigator.of(context).pop();
                       final bloc = BlocProvider.of<SideMenuBloc>(context);
                       bloc.selectMenu(Menu(4));
                     } else {
@@ -329,18 +336,20 @@ class ProductDetailsScreen extends StatelessWidget {
         item_price: size.price,
         size_name: size.name);
 
+
     isRegistered()
         ? Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LocationScreen(
-                isCartPage: false,
-                detailContext: context,
-                cartData: Cart.encondeToJson([cart]),
-                completeCost: totalPrice.toString(),
-              ),
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            LocationScreen(
+              isCartPage: false,
+              detailContext: context,
+              cartData: Cart.encondeToJson([cart]),
+              completeCost: totalPrice.toString(),
             ),
-          )
+      ),
+    )
         : alert("الرجاء تسجبل الدخول", context);
   }
 
@@ -357,7 +366,7 @@ class ProductDetailsScreen extends StatelessWidget {
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
-                  "حسنا",
+                  "تسجيل الدخول",
                   style: TextStyle(
                       color: mainColor,
                       fontSize: 15,
@@ -365,12 +374,37 @@ class ProductDetailsScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyAccountScreenPage(status:false )
+                    ),
+                  );
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(
+                  "إنشاء حساب",
+                  style: TextStyle(
+                      color: Colors.blueAccent,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyAccountScreenPage(status: true)
+                    ),
+                  );
                 },
               ),
             ],
           );
         });
   }
+
   String validateInputs() {
     if (selectedSize == null) {
       return "اختر حجم الذبيحة";
@@ -380,6 +414,7 @@ class ProductDetailsScreen extends StatelessWidget {
       return "";
     }
   }
+
   void addProductToCart() {
     DBHelper.database(sql_cart_query);
     final size = product.sizes.firstWhere((size) => size.id == selectedSize);
@@ -389,7 +424,7 @@ class ProductDetailsScreen extends StatelessWidget {
         'user_cart',
         {
           'key': product.id + selectedSize + slectedCut,
-          'id': product.id ,
+          'id': product.id,
           'name': product.title,
           'quantity': count.toString(),
           'size_key': selectedSize,

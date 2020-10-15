@@ -9,6 +9,8 @@ import 'package:zapihatalyoumnew/DataLayer/Product.dart';
 import '../../shared_data.dart';
 import 'package:http/http.dart' as http;
 
+import 'my_account_screen_page.dart';
+
 class MazadScreen extends StatefulWidget {
   @override
   _MazadScreenState createState() => _MazadScreenState();
@@ -27,14 +29,12 @@ class _MazadScreenState extends State<MazadScreen> {
           }),
     );
   }
-
   DateTime currentDate = DateTime.now();
   bool isloading = false;
   String difference = "";
   final bloc = ProductsQueryBloc();
 
   calculateRemainningTime(String endDate) {}
-
   Widget buildCartListItem(Mazad offer, context) {
     return Container(
       margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
@@ -193,7 +193,7 @@ class _MazadScreenState extends State<MazadScreen> {
     Map<String, String> headers = {
       'Authorization': 'Bearer $token',
     };
-    final uri = "https://thegradiant.com/zabihat_alyoum/api/mazads/addbid";
+    final uri = "https://www.appweb.host/zabihat_alyoum/api/mazads/addbid";
     final response = await http.post(
       uri,
       headers: isRegistered() ? headers : null,
@@ -315,7 +315,7 @@ class _MazadScreenState extends State<MazadScreen> {
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
-                  "حسنا",
+                  "تسجيل الدخول",
                   style: TextStyle(
                       color: mainColor,
                       fontSize: 15,
@@ -323,6 +323,32 @@ class _MazadScreenState extends State<MazadScreen> {
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyAccountScreenPage(status:false )
+                    ),
+                  );
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(
+                  "إنشاء حساب",
+                  style: TextStyle(
+                      color: Colors.blueAccent,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyAccountScreenPage(status: true)
+                    ),
+                  );
+                  Navigator.of(context).pop();
+
                 },
               ),
             ],

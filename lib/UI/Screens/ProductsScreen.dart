@@ -74,7 +74,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 10,
-                      childAspectRatio: 5/6,
+                      childAspectRatio: 5/6.3,
                       mainAxisSpacing: 10,
                     ),
                   );
@@ -91,7 +91,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
     var iOS = new notif.IOSInitializationSettings();
     var initSetttings = new notif.InitializationSettings(android, iOS);
     flutterLocalNotificationsPlugin.initialize(initSetttings);
-
     _firebaseMessaging.subscribeToTopic('zabihat_users');
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -119,7 +118,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
   }
   readFireToken() async {
     firetoken = await _firebaseMessaging.getToken();
+    print('firetoken :  $firetoken');
   }
-
-
 }
+
+

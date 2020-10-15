@@ -10,6 +10,8 @@ import 'package:zapihatalyoumnew/UI/Screens/LocationScreen.dart';
 import 'package:zapihatalyoumnew/helpers/DBHelper.dart';
 import 'package:zapihatalyoumnew/shared_data.dart';
 
+import 'my_account_screen_page.dart';
+
 class CartScreen extends StatelessWidget {
   double totalCost = 0.0;
   @override
@@ -330,13 +332,38 @@ class CartScreen extends StatelessWidget {
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
-                  "حسنا",
+                  "تسجيل الدخول",
                   style: TextStyle(
                       color: mainColor,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                 ),
                 onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyAccountScreenPage(status:false )
+                    ),
+                  );
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text(
+                  "إنشاء الحساب",
+                  style: TextStyle(
+                      color: mainColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyAccountScreenPage(status: true)
+                    ),
+                  );
                   Navigator.of(context).pop();
                 },
               ),
