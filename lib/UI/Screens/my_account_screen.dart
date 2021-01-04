@@ -17,7 +17,7 @@ class MyAccountScreen extends StatefulWidget {
 class _MyAccountScreenState extends State<MyAccountScreen> {
   bool isloading = false;
   final _formKey = GlobalKey<FormState>();
-  final Map<String, dynamic> formData = {};
+  Map<String, dynamic> get formData => {};
   @override
   Widget build(BuildContext context) {
     return  Container(

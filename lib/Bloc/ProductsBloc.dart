@@ -110,7 +110,6 @@ class ProductsQueryBloc implements Bloc {
       _controller.sink.add(productList);
     }
   }
-
   removeToken() async {
     final storage = new FlutterSecureStorage();
     await storage.delete(
@@ -118,7 +117,6 @@ class ProductsQueryBloc implements Bloc {
     );
     token = null;
   }
-
   @override
   void dispose() {
     _controller.close();

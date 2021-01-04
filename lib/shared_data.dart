@@ -36,6 +36,7 @@ isRegistered()  {
   }
 }
 
+
 final sql_cart_query =
     'CREATE TABLE user_cart(id TEXT PRIMARY KEY , key TEXT, name TEXT,quantity TEXT, size_key TEXT,size_name TEXT,pack TEXT, item_price TEXT, price TEXT,cut_key TEXT, cut_name TEXT,image TEXT)';
 final sql_orders_query =
